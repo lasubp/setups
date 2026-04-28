@@ -9,44 +9,56 @@ backup_file "/etc/dnf/dnf.conf"
 echo "max_parallel_downloads=10" | tee -a /etc/dnf/dnf.conf > /dev/null
 sudo dnf -y install dnf-plugins-core
 
-# Enable RPM Fusion repositories to access additional software packages and codecs
+# Setup EPEL and RPM Fusion
+# Sourses:
+# https://wiki.almalinux.org/repos/Extras.html
+# https://wiki.almalinux.org/documentation/epel-and-rpmfusion.html
+# Enable CRB
+sudo dnf config-manager --set-enabled crb
+# Enable EPEL
+sudo dnf install -y epel-release
+# Enable RPM Fusion repositories
+sudo dnf install distribution-gpg-keys
+# RPM Fusion (free packages)
+sudo rpmkeys --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-el-$(rpm -E %rhel)
+# RPM Fusion (nonfree packages)
+sudo rpmkeys --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-el-$(rpm -E %rhel)
+# Install EPEL reposetories
 sudo dnf install --nogpgcheck https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm
+# Istall RPM Fusion reposetories
 sudo dnf install --nogpgcheck https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm
-# RHEL clones have a alternatives step (for Alma and Rocky, versions 8 to 10)
-sudo /usr/bin/crb enable
-
-# Create necessary directories
-mkdir -p "$HOME/.config"
-zshplugins=$HOME/.config/zsh/plugins/
-mkdir -p $zshplugins/
-mkdir -p $HOME/.config/tmux
-mkdir -p $HOME/dotfiles
 
 # App Install
 # Install essential applications
-sudo dnf install -y btop htop rsync tmux wget curl
+sudo dnf install -y btop htop rsync tmux wget curl git
 
-# Install development tools and utilities
-sudo dnf install -y git
-sudo dnf install -y zsh
+# # Create necessary directories
+# mkdir -p "$HOME/.config"
+# zshplugins=$HOME/.config/zsh/plugins/
+# mkdir -p $zshplugins/
+# mkdir -p $HOME/.config/tmux
+# mkdir -p $HOME/dotfiles
 
-# Download ZSH Plugins
-git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions.git $zshplugins/zsh-autosuggestions
-git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting.git $zshplugins/zsh-syntax-highlighting
+## Setup ZSH
+## Download ZSH
+# sudo dnf install -y zsh
+## Download ZSH Plugins
+# git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions.git $zshplugins/zsh-autosuggestions
+# git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting.git $zshplugins/zsh-syntax-highlighting
 
-# Install starship prompt
+## Install starship prompt
 # color_echo "blue" "Installing starship prompt..."
 # curl -sS https://starship.rs/install.sh | sh
 
-# Download tmux theme pack
-git clone --depth 1 https://github.com/jimeh/tmux-themepack.git $HOME/.config/tmux/tmux-themepack
+## Download tmux theme pack
+# git clone --depth 1 https://github.com/jimeh/tmux-themepack.git $HOME/.config/tmux/tmux-themepack
 
-# Downloading dotfiles
-git clone --depth 1 https://github.com/lasubp/dotfiles.git $HOME/dotfiles
+## Downloading dotfiles
+# git clone --depth 1 https://github.com/lasubp/dotfiles.git $HOME/dotfiles
 
-# STOW
-ln -s $HOME/dotfiles/.config/zsh/aliases.zsh $HOME/.config/zsh/aliases.zsh
-ln -s $HOME/dotfiles/.config/tmux/tmux.conf $HOME/.config/tmux/tmux.conf
+## Apply dotfiles
+# ln -s $HOME/dotfiles/.config/zsh/aliases.zsh $HOME/.config/zsh/aliases.zsh
+# ln -s $HOME/dotfiles/.config/tmux/tmux.conf $HOME/.config/tmux/tmux.conf
 
-# Setup ZSH as default shell
-chsh -s $(which zsh) $USER
+## Setup ZSH as default shell
+# chsh -s $(which zsh) $USER
