@@ -24,13 +24,11 @@ mkdir -p $HOME/dotfiles
 
 # App Install
 # Install essential applications
-sudo dnf install -y mc btop htop rsync tmux wget curl
+sudo dnf install -y btop htop rsync tmux wget curl
 
 # Install development tools and utilities
 sudo dnf install -y git
 sudo dnf install -y zsh
-sudo dnf copr enable -y lihaohong/yazi
-sudo dnf install -y yazi
 
 # Download ZSH Plugins
 git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions.git $zshplugins/zsh-autosuggestions
