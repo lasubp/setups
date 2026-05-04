@@ -1,0 +1,65 @@
+---
+- name: Setup system
+  become: true
+  tasks:
+    # - name: Install distribution GPG keys
+    #   ansible.builtin.dnf:
+    #     name: distribution-gpg-keys
+    #     state: latest
+
+    # Enable RPM Fusion repository for multimedia packages
+    - name: Check if RPM Fusion free repo is already configured
+      ansible.builtin.stat:
+        path: /etc/yum.repos.d/rpmfusion-free.repo
+      register: rpmfusion_free_repo
+
+    - name: Check if RPM Fusion nonfree repo is already configured
+      ansible.builtin.stat:
+        path: /etc/yum.repos.d/rpmfusion-nonfree.repo
+      register: rpmfusion_nonfree_repo
+
+    - name: Import RPM Fusion GPG key
+      ansible.builtin.rpm_key:
+        key: "https://rpmfusion.org/keys?action=AttachFile&do=get&target=RPM-GPG-KEY-rpmfusion-free-el-{{ ansible_distribution_major_version }}"
+        state: present
+      when: not rpmfusion_free_repo.stat.exists
+
+    - name: Import RPM Fusion nonfree GPG key
+      ansible.builtin.rpm_key:
+        key: "https://rpmfusion.org/keys?action=AttachFile&do=get&target=RPM-GPG-KEY-rpmfusion-nonfree-el-{{ ansible_distribution_major_version }}"
+        state: present
+      when: not rpmfusion_nonfree_repo.stat.exists
+
+    - name: Install RPM Fusion free release package
+      ansible.builtin.dnf:
+        name: "https://download1.rpmfusion.org/free/el/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+        state: present
+      when: not rpmfusion_free_repo.stat.exists
+
+    - name: Install RPM Fusion nonfree release package
+      ansible.builtin.dnf:
+        name: "https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+        state: present
+      when: not rpmfusion_nonfree_repo.stat.exists
+
+    # Optimize DNF configuration for faster package management
+    - name: Configure DNF for faster performance
+      ansible.builtin.blockinfile:
+        path: /etc/dnf/dnf.conf
+        block: |
+          [main]
+          fastestmirror=True
+          max_parallel_downloads=10
+          best=True
+          skip_if_unavailable=True
+        
+      create: true
+      backup: true
+      marker : "# {mark} ANSIBLE MANAGED BLOCK - DNF PERFORMANCE OPTIMIZATIONS"
+
+    # Update all packages to the latest version
+    - name: Update all packages to the latest version
+      ansible.builtin.dnf:
+        name: '*'
+        state: latest
+        update_cache: true
