@@ -1,0 +1,1 @@
+ansible-playbook -i 192.168.3.52, -u vagrant -k ./setups/almalinux-playbook.yml -K --ssh-extra-args='-o StrictHostKeyChecking=no'
