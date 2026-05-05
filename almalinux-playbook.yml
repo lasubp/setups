@@ -1,5 +1,6 @@
 ---
 - name: Setup system
+  hosts: all
   become: true
 
   tasks:
@@ -48,10 +49,9 @@
           max_parallel_downloads=10
           best=True
           skip_if_unavailable=True
-        
-      create: true
-      backup: true
-      marker : "# {mark} ANSIBLE MANAGED BLOCK - DNF PERFORMANCE OPTIMIZATIONS"
+        create: true
+        backup: true
+        marker : "# {mark} ANSIBLE MANAGED BLOCK - DNF PERFORMANCE OPTIMIZATIONS"
 
     # Update all packages to the latest version
     - name: Update all packages to the latest version
@@ -72,29 +72,49 @@
           - pipx
         state: present
 
+    # - name: Ensure pipx is in the PATH for all users
+    #   ansible.builtin.lineinfile:
+    #     path: /etc/profile.d/pipx.sh
+    #     line: 'export PATH="$HOME/.local/bin:$PATH"'
+    #     create: true
+    #     state: present
+# 
+    # - name: Run pipx with correct PATH
+    #   ansible.builtin.command: pipx list
+    #   environment:
+    #     PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.PATH }}"
+
+      # Run pip ensurepath
+    - name: Ensure pipx paths are set up
+      ansible.builtin.command:
+        cmd: pipx ensurepath
+      become: false
+      
     # install Anssible using pipx
     - name: Install Ansible
-      comunity.general.pipx:
+      community.general.pipx:
         name: ansible
         state: present
-        include_dependencies: true
+        install_deps: true
+      become: false
 
     # Install pywinrm for Ansible Windows support
     - name: Install pywinrm
-      comunity.general.pipx:
+      community.general.pipx:
         name: ansible
-        state: inject # inject pywinrm into the ansible pipx environment
+        state: inject
         inject_packages:
           - pywinrm
+      become: false
 
     # # Install ansible from EPEL repository (if not using pipx)
-    # - name: Install Ansible from EPEL repository
+    # - name: Uninstall Ansible from EPEL repository
     #   ansible.builtin.dnf:
     #     name: ansible
-    #     state: present
+    #     state: absent
     #  
-    # - name: install pywinrm for Ansible Windows support
+    # - name: Uninstall pywinrm for Ansible Windows support
     #   ansible.builtin.pip:
     #     name: pywinrm>=0.3.0
-    #     state: present
+    #     state: absent
       
