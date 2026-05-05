@@ -72,29 +72,29 @@
           - pipx
         state: present
 
-    # # install Anssible using pipx
-    # - name: Install Ansible
-    #   comunity.general.pipx:
-    #     name: ansible
-    #     state: present
-    #     include_dependencies: true
-# 
-    # # Install pywinrm for Ansible Windows support
-    # - name: Install pywinrm
-    #   comunity.general.pipx:
-    #     name: ansible
-    #     state: inject # inject pywinrm into the ansible pipx environment
-    #     inject_packages:
-    #       - pywinrm
-
-    # Install ansible from EPEL repository (if not using pipx)
-    - name: Install Ansible from EPEL repository
-      ansible.builtin.dnf:
+    # install Anssible using pipx
+    - name: Install Ansible
+      comunity.general.pipx:
         name: ansible
         state: present
-     
-    - name: install pywinrm for Ansible Windows support
-      ansible.builtin.pip:
-        name: pywinrm>=0.3.0
-        state: present
+        include_dependencies: true
+
+    # Install pywinrm for Ansible Windows support
+    - name: Install pywinrm
+      comunity.general.pipx:
+        name: ansible
+        state: inject # inject pywinrm into the ansible pipx environment
+        inject_packages:
+          - pywinrm
+
+    # # Install ansible from EPEL repository (if not using pipx)
+    # - name: Install Ansible from EPEL repository
+    #   ansible.builtin.dnf:
+    #     name: ansible
+    #     state: present
+    #  
+    # - name: install pywinrm for Ansible Windows support
+    #   ansible.builtin.pip:
+    #     name: pywinrm>=0.3.0
+    #     state: present
       
