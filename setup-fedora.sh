@@ -62,3 +62,30 @@ stow .
 
 # Setup ZSH as default shell
 chsh -s $(which zsh) $USER
+
+### TODO: add mediacodecs setup from https://rpmfusion.org/Howto/Multimedia
+
+# switch to full ffmpeg
+sudo dnf swap ffmpeg-free ffmpeg --allowerasing
+
+# install additional codec
+# thiss will allow gsteamer framework and other multimedia software to use restricted codecs
+sudo dnf update @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin
+
+### Hardwre Accelerated codecs
+#
+## Intel (recent)
+# sudo dnf install intel-media-driver
+## Intel (older)
+# sudo dnf install libva-intel-driver
+#
+## AMD (mesa)
+# sudo dnf install mesa-va-drivers-freeworld
+## for steam or alikes
+# sudo dnf install mesa-va-drivers-freeworld.i686
+#
+## Nvidia
+# sudo dnf install libva-nvidia-driver
+## also 32 and 64 bit flovors cn be installed in one command as needed
+# sudo dnf install libva-nvidia-driver.{i686,x86_64}
+
