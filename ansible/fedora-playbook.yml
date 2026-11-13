@@ -1,13 +1,34 @@
 ---
 - name: Setup system
-  become: true
+  hosts: all
   vars_fiel:
-  - vars.yml
+  - preferences.yml
 
   tasks:
-  - import_task: tasks/distribution_gpg_keys.yml
-  - import_task: tasks/enable_rpm_fusion.yml
-  - import_task: tasks/dnf_conf.yml
-  - import_task: tasks/dnf_update.yml
-  - import_task: tasks/install_apps.yml
-  - import_task: tasks/install_ansible.yml
+    - name: Configure DNF  
+      ansible.builtin.import_task: tasks/dnf_conf.yml
+      become: true
+
+    - name: Perform system uptade
+      ansible.builtin.import_task: tasks/dnf_update.yml
+  
+    - ansible.builtin.import_task: tasks/distribution_gpg_keys.yml
+
+    - name: Setup RPM Fusion
+      ansible.builtin.import_task: tasks/enable_rpm_fusion.yml
+      become: true
+  
+    - name: Install additional mediacodecs form rpm fuffion
+      import_task: tasks/rpm_fusion_media_codecs.yml
+      become: true
+  
+    - name: Replase Fedora Flatpak with Flathub
+      ansible.builtin.import_task: tasks/replace_fedora_flatpak.yml
+  
+    - name: Install apps
+      ansible.builtin.import_task: tasks/install_apps.yml
+      become: true
+  
+    - name: Install Ansible
+      ansible.builtin.import_task: tasks/install_ansible.yml
+  

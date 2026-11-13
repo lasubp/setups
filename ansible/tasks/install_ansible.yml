@@ -22,4 +22,5 @@
   ansible.builtin.dnf:
     name: ansible
     state: present
+    become: true
   when: ansible_insalation_way == "dnf"

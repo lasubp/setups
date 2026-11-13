@@ -8,4 +8,5 @@
       best=True
     create: true
     backup: true
+    become: true
     marker : "# {mark} ANSIBLE MANAGED BLOCK - DNF PERFORMANCE OPTIMIZATIONS"

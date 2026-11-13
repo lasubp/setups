@@ -1,0 +1,17 @@
+- name: Install Flatpak
+  ansible.bultin.dnf:
+    name: flatpak
+    state: present
+    become: true
+
+- name: Remove Fedora flatpak reposetory remote
+  ansible.comunity.flatpak_remote:
+    name: fedora
+    state: absent
+
+- name: Add Flathub flatpak reposetory remote
+  ansible.comunity.flatpak_remote:
+    name: flathub
+    state: present
+    flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
+  

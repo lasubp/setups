@@ -3,3 +3,5 @@
   ansible.builtin.dnf:
   name: {{ apps_to_install }}
   state: present
+  become: true
+  

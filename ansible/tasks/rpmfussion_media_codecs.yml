@@ -1,0 +1,64 @@
+# Switch to full ffmpeg
+
+- name: Delere builtin ffmpeg
+  ansible.builtin.dnf:
+    name: ffmpeg-free
+    state: absent
+  become: true
+
+- name: Install rpmfusion ffmpeg
+  ansible.builtin.dnf:
+    name: ffmpeg
+    state: present
+  become: true
+
+# Install additional media codecs
+
+- name: Upgrade multimedia group without weak deps
+  ansible.builtin.dnf:
+    name: "@multimedia"
+    state: latest
+    install_weak_deps: false
+    exclude:
+      - PackageKit-gstreamer-plugin
+  become: true
+
+  # Hardware accelereated codecs
+
+- name: Detect GPU vendor IDs
+ansible.builtin.shell: |
+  for d in /sys/bus/pci/devices/*; do
+    [ -r "$d/class" ] || continue
+    read -r class < "$d/class"
+    case "$class" in 0x03*) cat "$d/vendor" ;; esac
+  done
+register: gpu_raw
+changed_when: false
+check_mode: false
+
+- name: Set GPU vendor flags
+  ansible.builtin.set_fact:
+    gpu_nvidia: "{{ '0x10de' in gpu_raw.stdout_lines }}"
+    gpu_amd:    "{{ '0x1002' in gpu_raw.stdout_lines }}"
+    gpu_intel:  "{{ '0x8086' in gpu_raw.stdout_lines }}"
+
+- name: Install Intel hardware accelerated codecs
+  ansible.builtin.dnf:
+    name: intel-media-driver
+    state: present
+    become: true
+    when: gpu_intel
+
+- name: Install AMD hardware accelerated codecs
+  ansible.builtin.dnf:
+    name: mesa-va-drivers-freeworld
+    state: present
+    become: true
+    when: gpu_amd
+
+- name: Install Nvidia hardware accelerated codecs
+  ansible.builtin.dnf:
+    name: libva-nvidia-driver
+    state: present
+    become: true
+    when: gpu_nvidia
