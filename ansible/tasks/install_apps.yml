@@ -1,0 +1,5 @@
+# Install common utilities
+- name: Install common utilities
+  ansible.builtin.dnf:
+  name: {{ apps_to_install }}
+  state: present

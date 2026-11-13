@@ -1,0 +1,30 @@
+# Install EPEL repository across RHEL/CentOS versions
+# https://oneuptime.com/blog/post/2026-02-21-ansible-install-epel-repository-rhel-centos/view
+
+- name: Check if EPEL repo is already configured
+  ansible.builtin.stat:
+    path: /etc/yum.repos.d/epel.repo
+  register: epel_repo
+
+- name: Import EPEL GPG key
+  ansible.builtin.rpm_key:
+    key: "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}"
+    state: present
+  when: not epel_repo.stat.exists
+
+- name: Install EPEL release package (CentOS/Rocky/Alma)
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+  when:
+    - not epel_repo.stat.exists
+    - ansible_distribution in ['CentOS', 'Rocky', 'AlmaLinux']
+
+# On RHEL 8+, also enable CodeReady Builder / CRB (needed for some EPEL packages)
+- name: Enable CRB repository (RHEL / CentOS Stream 9)
+  ansible.builtin.command:
+    cmd: dnf config-manager --set-enabled crb
+  when:
+    - ansible_distribution_major_version | int >= 9
+    - ansible_distribution in ['CentOS', 'Rocky', 'AlmaLinux']
+  changed_when: true

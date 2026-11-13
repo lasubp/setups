@@ -1,0 +1,13 @@
+---
+- name: Setup system
+  become: true
+  vars_fiel:
+  - vars.yml
+
+  tasks:
+  - import_task: tasks/distribution_gpg_keys.yml
+  - import_task: tasks/enable_rpm_fusion.yml
+  - import_task: tasks/dnf_conf.yml
+  - import_task: tasks/dnf_update.yml
+  - import_task: tasks/install_apps.yml
+  - import_task: tasks/install_ansible.yml

@@ -1,0 +1,25 @@
+- name: Install pipx
+	ansible.builtin.dnf:
+		name: pipx
+		state: present
+  when: ansible_insalation_way != "dnf"
+
+- name: Ensure pipx paths are set up
+  ansible.builtin.command:
+    cmd: pipx ensurepath
+  become: false
+	when: ansible_insalation_way != "dnf"
+
+- name: Install Ansible from pipx
+  community.general.pipx:
+    name: ansible
+    state: present
+    install_deps: true
+  become: false
+  when: ansible_insalation_way != "dnf"
+
+- name: Install Ansible from dnf repo
+  ansible.builtin.dnf:
+    name: ansible
+    state: present
+  when: ansible_insalation_way == "dnf"
