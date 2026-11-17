@@ -1,0 +1,7 @@
+managed_users:
+  - name: git
+    comment: Git user
+    home: "/var/git/"
+    shell: "'/bin/bash"
+    ssh_keys: {{ lookup(home/lukas/.ssh/alp.pub) }}
+

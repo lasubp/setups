@@ -1,0 +1,47 @@
+- name: Setut Cgit on Alpine Linux
+  hosts: all
+  
+  pre_tasks:
+    - name: Install Python 3
+      ansible.builtin.raw: test -x /usr/bin/python3 || apk add --no-cache python3
+      register: bootstrap_python
+      changed_when: bootstrap_python.stdout !=""
+
+
+  tasks:
+    - name: Create Git user
+      become: true
+      roles:
+        - managed_users
+
+    - name: Install required packages
+      ansible.builtin.apk:
+        name:
+          - git 
+          - cgit
+          - fcgiwrap
+          - spawn-fcgi
+          - lightttpd
+
+    - name: Setup Cgit
+      ansible.builtin.copy:
+      content:
+        virtual-root=/
+        scan-path=/var/git/
+      dest: /etc/cgitrc
+      mode: '0644'
+
+    - name: Create spawn-fcgi service
+      ansible.builtin.file:
+        state: link
+        src: spawn-fcgt
+        dest: /etc/init.d/spawn-fcgi.cgit
+
+    - name: Eanble spawn-fcgi logging
+      ansible.builtin.lineinfile:
+        path: /etc/init.d/spawn-fcgi.cgit
+        regrexp: '^(.*\$\{FCGI_PROGRAM\})(?!\s+-f)(.*)$'
+        line: '\1 -f\2'
+        backrefs: yes
+
+    

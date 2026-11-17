@@ -1,0 +1,57 @@
+---
+- name: Manage user accounts
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    comment: "{{ item.comment | default(omit) }}"
+    state: "{{ item.state | default('present') }}"
+    system: "{{ item.system | default(false) }}"
+    shell: "{{ item.shell | default(managed_users_default_shell) }}"
+    create_home: "{{ item.create_home | default(true) }}"
+    home: "{{ item.home | default(omit) }}"
+    groups: "{{ item.groups | default(omit) }}"
+    append: true
+    password_lock: "{{ item.password_lock | default(true) }}"
+    remove: "{{ item.remove | default(false) }}"
+  loop: "{{ managed_users }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Install authorized SSH keys
+  ansible.posix.authorized_key:
+    user: "{{ item.0.name }}"
+    key: "{{ item.1 }}"
+    key_options: "{{ item.0.ssh_key_options | default(omit) }}"
+    state: present
+  loop: "{{ managed_users | subelements('ssh_keys', skip_missing=True) }}"
+  loop_control:
+    label: "{{ item.0.name }}"
+  when: (item.0.state | default('present')) == 'present'
+
+- name: Install sudoers rules
+  ansible.builtin.copy:
+    dest: "{{ managed_users_sudoers_dir }}/{{ item.name }}"
+    content: >-
+      {{ item.name }} ALL=(root)
+      {{ 'NOPASSWD:' if item.sudo_nopasswd | default(true) else '' }}
+      {{ item.sudo_commands | join(', ') }}
+    owner: root
+    group: root
+    mode: "0440"
+    validate: /usr/sbin/visudo -cf %s
+  loop: "{{ managed_users }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - (item.state | default('present')) == 'present'
+    - (item.sudo_commands | default([])) | length > 0
+
+- name: Remove sudoers rules for users without sudo or marked absent
+  ansible.builtin.file:
+    path: "{{ managed_users_sudoers_dir }}/{{ item.name }}"
+    state: absent
+  loop: "{{ managed_users }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: >-
+    (item.state | default('present')) == 'absent'
+    or (item.sudo_commands | default([])) | length == 0

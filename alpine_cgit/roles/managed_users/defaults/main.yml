@@ -1,0 +1,23 @@
+---
+# List of users to manage. See the example in group_vars/all/users.yml
+#
+# Supported keys per user:
+#   name           (required) username
+#   state          present (default) | absent
+#   comment        GECOS / description
+#   system         true -> system account (low UID, no aging). Default false
+#   shell          default: managed_users_default_shell
+#   create_home    default true
+#   home           custom home directory
+#   groups         list of supplementary groups (appended, never replaced)
+#   password_lock  default true (key-only login, no password)
+#   remove         with state=absent: also delete home directory. Default false
+#   ssh_keys       list of public keys for authorized_keys
+#   ssh_key_options  authorized_keys options, e.g. 'from="10.0.0.5",restrict'
+#   sudo_commands  list of commands allowed via sudo; ['ALL'] for full sudo.
+#                  Omit or [] for no sudo (and any existing sudoers file is removed)
+#   sudo_nopasswd  default true
+managed_users: []
+
+managed_users_default_shell: /bin/bash
+managed_users_sudoers_dir: /etc/sudoers.d
