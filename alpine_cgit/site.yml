@@ -25,16 +25,16 @@
 
     - name: Setup Cgit
       ansible.builtin.copy:
-      content:
-        virtual-root=/
-        scan-path=/var/git/
-      dest: /etc/cgitrc
-      mode: '0644'
+        content:
+          virtual-root=/
+          scan-path=/var/git/
+        dest: /etc/cgitrc
+        mode: '0644'
 
     - name: Create spawn-fcgi service
       ansible.builtin.file:
         state: link
-        src: spawn-fcgt
+        src: spawn-fcgi
         dest: /etc/init.d/spawn-fcgi.cgit
 
     - name: Eanble spawn-fcgi logging
@@ -44,4 +44,29 @@
         line: '\1 -f\2'
         backrefs: yes
 
+    - name: Create spawn-fcgi.cgit config
+      ansible.builtin.copy:
+        content:
+          FCGI_SOCKET=/run/fcgiwrap/fcgiwrap.sock
+          FCGI_PROGRAM=/usr/bin/fcgiwrap
+          FCGI_EXTRA_OPTIONS="-M 0660 -U nginx -G nginx"
+        dest: /etc/conf.d/spawn-fcgi.cgit
+        mode: '0644'
+      notify: Start spawn-fcgi.cgit service
+
+
+    - name: Create Cgit congir for lightttpd
+      ansible.builtin.copy:
+        src: files/lighttpd/cgit.conf
+        dest: /etc/lighttpd/cgit.conf
     
+    - name: Include Cgit config to lighttpd config
+      ansible.builtin.lineinfile:
+        path: /etc/lighttpd/lighttpd.conf
+        line: include "cgit.conf"
+        state: present
+
+    - name: Restart Lighttpd servise
+      ansible.builtin.service:
+        name: lirhttpd
+        state: restarted

@@ -1,0 +1,5 @@
+- name: Start spawn-fcgi.cgit service
+  ansible.builtin.service:
+    name: spawn-fcgi.cgit
+    state: started
+    enabled: true
