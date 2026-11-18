@@ -1,5 +1,6 @@
 - name: Setut Cgit on Alpine Linux
   hosts: all
+  become: true
   
   pre_tasks:
     - name: Install Python 3
@@ -10,63 +11,26 @@
 
   tasks:
     - name: Create Git user
-      become: true
       roles:
         - managed_users
 
-    - name: Install required packages
+    - name: Install git and cgit
       ansible.builtin.apk:
         name:
           - git 
           - cgit
-          - fcgiwrap
-          - spawn-fcgi
-          - lightttpd
 
     - name: Setup Cgit
       ansible.builtin.copy:
-        content:
-          virtual-root=/
-          scan-path=/var/git/
+        src: files/cgitrc
         dest: /etc/cgitrc
         mode: '0644'
 
-    - name: Create spawn-fcgi service
-      ansible.builtin.file:
-        state: link
-        src: spawn-fcgi
-        dest: /etc/init.d/spawn-fcgi.cgit
+    - name: Setup Lighttpd
+      ansible.builtin.import_task: tasks/setup_lighttpd.yml
+      when: web_server == lighttpd
 
-    - name: Eanble spawn-fcgi logging
-      ansible.builtin.lineinfile:
-        path: /etc/init.d/spawn-fcgi.cgit
-        regrexp: '^(.*\$\{FCGI_PROGRAM\})(?!\s+-f)(.*)$'
-        line: '\1 -f\2'
-        backrefs: yes
-
-    - name: Create spawn-fcgi.cgit config
-      ansible.builtin.copy:
-        content:
-          FCGI_SOCKET=/run/fcgiwrap/fcgiwrap.sock
-          FCGI_PROGRAM=/usr/bin/fcgiwrap
-          FCGI_EXTRA_OPTIONS="-M 0660 -U nginx -G nginx"
-        dest: /etc/conf.d/spawn-fcgi.cgit
-        mode: '0644'
-      notify: Start spawn-fcgi.cgit service
-
-
-    - name: Create Cgit congir for lightttpd
-      ansible.builtin.copy:
-        src: files/lighttpd/cgit.conf
-        dest: /etc/lighttpd/cgit.conf
-    
-    - name: Include Cgit config to lighttpd config
-      ansible.builtin.lineinfile:
-        path: /etc/lighttpd/lighttpd.conf
-        line: include "cgit.conf"
-        state: present
-
-    - name: Restart Lighttpd servise
-      ansible.builtin.service:
-        name: lirhttpd
-        state: restarted
+    - name: Setup NGINX and fcgi
+      ansible.builtin.import_task: tasks/setup_nginx.yml
+      when: web_server == nginx
+      

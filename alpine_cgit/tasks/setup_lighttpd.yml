@@ -1,0 +1,15 @@
+- name: Install lightttpd
+  name: lighttpd
+  state: present
+
+- name: Create Cgit confir for lightttpd
+  ansible.builtin.template:
+    src: templates/lighttpd_conf.j2
+    dest: /etc/lighttpd/cgit.conf
+
+- name: Include Cgit config to lighttpd config
+  ansible.builtin.lineinfile:
+    path: /etc/lighttpd/lighttpd.conf
+    line: include "cgit.conf"
+    state: present
+    notify: restart Lighttpd

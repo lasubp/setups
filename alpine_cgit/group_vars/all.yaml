@@ -5,3 +5,9 @@ managed_users:
     shell: "'/bin/bash"
     ssh_keys: {{ lookup(home/lukas/.ssh/alp.pub) }}
 
+# Lighttpd or NGINX
+web_server: lighttpd
+
+# Domain name used only with NGINX, Lighttpd dont need it
+domain_name: git.example.com
+port: 1234

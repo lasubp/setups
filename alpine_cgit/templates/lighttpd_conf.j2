@@ -8,6 +8,7 @@ var.webapps  = "/usr/share/webapps/"
 $HTTP["url"] =~ "^/cgit" {
     server.document-root = webapps
     server.indexfiles = ("cgit.cgi")
+    server.port = {{ port | default(80) }}
     cgi.assign = ("cgit.cgi" => "")
     mimetype.assign = ( ".css" => "text/css" )
 }

@@ -1,0 +1,3 @@
+FCGI_SOCKET=/run/fcgiwrap/fcgiwrap.sock
+FCGI_PROGRAM=/usr/bin/fcgiwrap
+FCGI_EXTRA_OPTIONS="-M 0660 -U nginx -G nginx"
