@@ -1,0 +1,17 @@
+- name: restart Lighttpd
+  ansible.builtin.service:
+    name: lighttpd
+    state: restarted
+    enabled: true
+
+- name: restart nginx
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
+    enabled: true
+
+- name: Start spawn-fcgi.cgit service
+  ansible.builtin.service:
+    name: spawn-fcgi.cgit
+    state: started
+    enabled: true

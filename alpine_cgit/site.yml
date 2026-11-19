@@ -1,23 +1,33 @@
+---
 - name: Setut Cgit on Alpine Linux
   hosts: all
   become: true
-  
+  gather_facts: false
+
   pre_tasks:
     - name: Install Python 3
-      ansible.builtin.raw: test -x /usr/bin/python3 || apk add --no-cache python3
+      ansible.builtin.raw: >-
+        test -x /usr/bin/python3 ||
+        apk add --no-cache python3
       register: bootstrap_python
       changed_when: bootstrap_python.stdout !=""
 
+    - name: Gather facts
+      ansible.builtin.setup:
+
+  handlers:
+    - name: Import handlers
+      ansible.builtin.import_tasks: handlers/main.yml
 
   tasks:
     - name: Create Git user
-      roles:
-        - managed_users
+      ansible.builtin.include_role:
+        name: managed_users
 
     - name: Install git and cgit
       ansible.builtin.apk:
         name:
-          - git 
+          - git
           - cgit
 
     - name: Setup Cgit
@@ -27,10 +37,9 @@
         mode: '0644'
 
     - name: Setup Lighttpd
-      ansible.builtin.import_task: tasks/setup_lighttpd.yml
-      when: web_server == lighttpd
+      ansible.builtin.include_tasks: tasks/setup_lighttpd.yml
+      when: web_server == "lighttpd"
 
     - name: Setup NGINX and fcgi
-      ansible.builtin.import_task: tasks/setup_nginx.yml
-      when: web_server == nginx
-      
+      ansible.builtin.include_tasks: tasks/setup_nginx.yml
+      when: web_server == "nginx"

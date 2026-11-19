@@ -3,11 +3,12 @@ managed_users:
     comment: Git user
     home: "/var/git/"
     shell: "'/bin/bash"
-    ssh_keys: {{ lookup(home/lukas/.ssh/alp.pub) }}
+    ssh_keys:
+      - "{{ lookup('file', '~/.ssh/alp.pub') }}"
 
-# Lighttpd or NGINX
+# lighttpd or nginx
 web_server: lighttpd
 
 # Domain name used only with NGINX, Lighttpd dont need it
-domain_name: git.example.com
-port: 1234
+domain_name:
+cgit_port: 1234

@@ -9,7 +9,7 @@
     create_home: "{{ item.create_home | default(true) }}"
     home: "{{ item.home | default(omit) }}"
     groups: "{{ item.groups | default(omit) }}"
-    append: true
+    append: "{{ true if item.groups is defined else omit }}"
     password_lock: "{{ item.password_lock | default(true) }}"
     remove: "{{ item.remove | default(false) }}"
   loop: "{{ managed_users }}"

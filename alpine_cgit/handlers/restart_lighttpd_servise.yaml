@@ -1,5 +1,5 @@
 - name: restart Lighttpd
   ansible.builtin.service:
-    name: lirhttpd
+    name: lighttpd
     state: restarted
     enabled: true

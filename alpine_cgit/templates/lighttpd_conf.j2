@@ -1,17 +1,16 @@
-server.modules += ("mod_redirect",
-                  "mod_alias",
-                  "mod_cgi",
-                  "mod_fastcgi",
-                  "mod_rewrite" )
+server.modules += ("mod_cgi", "mod_rewrite")
 
-var.webapps  = "/usr/share/webapps/"
-$HTTP["url"] =~ "^/cgit" {
-    server.document-root = webapps
-    server.indexfiles = ("cgit.cgi")
-    server.port = {{ port | default(80) }}
-    cgi.assign = ("cgit.cgi" => "")
-    mimetype.assign = ( ".css" => "text/css" )
+$SERVER["socket"] == ":{{ cgit_port | default(1234) }}" {
+{% if domain_name | default('') %}
+    $HTTP["host"] =~ "^{{ domain_name | regex_escape }}(:[0-9]+)?$" {
+{% endif %}
+        server.document-root = "/usr/share/webapps/cgit"
+        index-file.names     = ("cgit.cgi")
+        cgi.assign           = ("cgit.cgi" => "")
+        url.rewrite-if-not-file = (
+            "^/(.*)$" => "/cgit.cgi/$1"
+        )
+{% if domain_name | default('') %}
+    }
+{% endif %}
 }
-url.redirect = (
-    "^/git/(.*)$" => "/cgit/cgit.cgi/$1",
-)

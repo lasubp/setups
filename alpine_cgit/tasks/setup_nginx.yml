@@ -1,3 +1,4 @@
+---
 - name: Install NGINX and fcgi
   ansible.builtin.apk:
     name:
@@ -15,9 +16,9 @@
 - name: Eanble spawn-fcgi logging
   ansible.builtin.lineinfile:
     path: /etc/init.d/spawn-fcgi.cgit
-    regrexp: '^(.*\$\{FCGI_PROGRAM\})(?!\s+-f)(.*)$'
+    regexp: '^(.*\$\{FCGI_PROGRAM\})(?!\s+-f)(.*)$'
     line: '\1 -f\2'
-    backrefs: yes
+    backrefs: true
 
 - name: Create spawn-fcgi.cgit config
   ansible.builtin.copy:
@@ -29,5 +30,5 @@
 - name: Configure Nginx
   ansible.builtin.template:
     src: templates/nginx_config.j2
-    dest: /etc/nginx/http.d/{{ domain_name }}.conf
-    notify: restart nginx
+    dest: "/etc/nginx/http.d/{{ domain_name }}.conf"
+  notify: restart nginx
