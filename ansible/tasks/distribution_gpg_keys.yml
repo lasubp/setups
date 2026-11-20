@@ -1,4 +1,5 @@
+---
 - name: Install distribution GPG keys
-   ansible.builtin.dnf:
+  ansible.builtin.dnf:
     name: distribution-gpg-keys
     state: present

@@ -1,12 +1,11 @@
-# Optimize DNF configuration for faster package management
-- name: Configure DNF for performance
+- name: Optimize DNF configuration for faster package management
   ansible.builtin.blockinfile:
     path: /etc/dnf/dnf.conf
-    block:
+    block: |
       [main]
       max_parallel_downloads=10
       best=True
     create: true
     backup: true
-    become: true
-    marker : "# {mark} ANSIBLE MANAGED BLOCK - DNF PERFORMANCE OPTIMIZATIONS"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - DNF PERFORMANCE OPTIMIZATIONS"
+  become: true

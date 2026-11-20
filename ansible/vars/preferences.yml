@@ -1,12 +1,12 @@
 apps_to_install:
-	- vim
-	- git
-	- curl
-	- wget
-	- btop
+- vim
+- git
+- curl
+- wget
+- btop
 
 # Set "True" to setup comtrolled host as Ansible control plane
-ansible_comtrol_plane: false
+ansible_comtrol_plane: true
 # Choose Ansible instalation way, "pipx" (default), or "dnf" (may require to setup extra repos)
 ansible_insalation_way: pipx
 
@@ -16,13 +16,13 @@ ansible_insalation_way: pipx
 setup_epel: true
 
 # Setup RPM Fusion
-setup_rpmfusion: false
+setup_rpmfusion: true
 
 # Install addiditional media codecs
 # Require RPM Fusion to also be enabled
 # Else this will not work
-media: false
+media: true
 
 # Setup Flathub Flatpack reposetories
 # If Fedora flatpak reposetories was present, they will be swaped to Flathub reposetories
-flatpak: false
+flatpak: true
