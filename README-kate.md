@@ -52,3 +52,21 @@ Ensure `$HOME/.local/bin` and `$HOME/go/bin` are in your shell's `PATH` (handled
   * `~/.config/katemoderc`
   * `~/.config/kate/lspclient/settings.json`
   * `~/.config/efm-langserver/config.yaml`
+
+  
+## Custom Keyboard Shortcuts (Matching Sublime Text)
+
+Custom shortcuts are stored in `~/.local/share/kxmlgui5/` (**Settings → Configure Keyboard Shortcuts**) so Kate matches Sublime Text keybindings.
+
+| Category | Shortcut | Kate Action |
+| :--- | :--- | :--- |
+| **LSP Navigation** | `F12` | Go to Definition |
+| | `Shift+F12` | Find References |
+| | `Ctrl+K`, `Ctrl+I` | Show Hover Info |
+| **LSP Linting** | `F8` / `Shift+F8` | Next / Previous Diagnostic |
+| **LSP Editing** | `F2` | Rename Symbol |
+| | `Ctrl+.` | Quick Fix / Code Action |
+| | `Ctrl+Alt+L` | Format Document |
+| **Git** | `Ctrl+Alt+G` | Toggle **Git** Sidebar Toolview |
+| | `Ctrl+Alt+B` | Toggle Inline Git Blame |
+| | `Alt+Down` / `Alt+Up` | Move to Next / Previous Modified Line |

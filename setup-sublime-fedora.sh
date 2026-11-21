@@ -150,18 +150,90 @@ cat << 'EOF' > "$USER_PKGS/LSP-yaml.sublime-settings"
 }
 EOF
 
-# Extend LSP-dockerfile to also trigger on Podman Containerfiles
-cat << 'EOF' > "$USER_PKGS/LSP-dockerfile.sublime-settings"
-{
-    "selector": "source.dockerfile | source.containerfile"
-}
-EOF
-
 # Extend LSP-bash to cover Zsh as well
 cat << 'EOF' > "$USER_PKGS/LSP-bash.sublime-settings"
 {
     "selector": "source.shell.bash | source.shell.zsh"
 }
+EOF
+
+echo "=== 10. Configuring Custom Keybindings (LSP & GitSavvy) ==="
+cat << 'EOF' > "$USER_PKGS/Default (Linux).sublime-keymap"
+[
+    // --- LSP: Navigation & Documentation ---
+    {
+        "keys": ["f12"],
+        "command": "lsp_symbol_definition",
+        "context": [{ "key": "lsp.session_with_capability", "operator": "equal", "operand": "definitionProvider" }]
+    },
+    {
+        "keys": ["shift+f12"],
+        "command": "lsp_symbol_references",
+        "context": [{ "key": "lsp.session_with_capability", "operator": "equal", "operand": "referencesProvider" }]
+    },
+    {
+        "keys": ["ctrl+k", "ctrl+i"],
+        "command": "lsp_hover",
+        "context": [{ "key": "lsp.session_with_capability", "operator": "equal", "operand": "hoverProvider" }]
+    },
+
+    // --- LSP: Diagnostics (Lint Errors & Warnings) ---
+    {
+        "keys": ["f8"],
+        "command": "lsp_next_diagnostic"
+    },
+    {
+        "keys": ["shift+f8"],
+        "command": "lsp_prev_diagnostic"
+    },
+    {
+        "keys": ["ctrl+shift+m"],
+        "command": "lsp_show_diagnostics_panel"
+    },
+
+    // --- LSP: Refactoring & Formatting ---
+    {
+        "keys": ["f2"],
+        "command": "lsp_symbol_rename",
+        "context": [{ "key": "lsp.session_with_capability", "operator": "equal", "operand": "renameProvider" }]
+    },
+    {
+        "keys": ["ctrl+."],
+        "command": "lsp_code_actions",
+        "context": [{ "key": "lsp.session_with_capability", "operator": "equal", "operand": "codeActionProvider" }]
+    },
+    {
+        "keys": ["ctrl+alt+l"],
+        "command": "lsp_format_document",
+        "context": [{ "key": "lsp.session_with_capability", "operator": "equal", "operand": "documentFormattingProvider" }]
+    },
+
+    // --- GitSavvy & Native Git Gutter ---
+    {
+        "keys": ["ctrl+alt+g"],
+        "command": "gs_show_status"
+    },
+    {
+        "keys": ["ctrl+alt+d"],
+        "command": "gs_diff"
+    },
+    {
+        "keys": ["ctrl+alt+b"],
+        "command": "gs_blame"
+    },
+    {
+        "keys": ["alt+down"],
+        "command": "next_modification"
+    },
+    {
+        "keys": ["alt+up"],
+        "command": "prev_modification"
+    },
+    {
+        "keys": ["ctrl+k", "ctrl+z"],
+        "command": "revert_modification"
+    }
+]
 EOF
 
 echo "=== Done! Launch Sublime Text and wait ~15 seconds for Package Control to finish installing packages. ==="

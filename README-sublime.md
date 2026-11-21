@@ -54,3 +54,24 @@ All user settings and package declarations live inside:
 * `~/.config/efm-langserver/config.yaml`
 
 Copying those two directories to a new machine (or re-running `setup-sublime-fedora.sh`) reproduces the complete environment.
+
+
+## Custom Keybindings (LSP & Git)
+
+Custom keybindings are stored in `~/.config/sublime-text/Packages/User/Default (Linux).sublime-keymap` (**Preferences → Key Bindings**).
+
+| Category | Shortcut | Action |
+| :--- | :--- | :--- |
+| **LSP Navigation** | `F12` | Jump to definition (Terraform variables/modules, Python functions, C symbols) |
+| | `Shift+F12` | Find all references across the workspace |
+| | `Ctrl+K`, `Ctrl+I` | Show hover documentation / schema description |
+| **LSP Linting** | `F8` / `Shift+F8` | Jump to next / previous lint error or warning |
+| | `Ctrl+Shift+M` | Toggle the full workspace diagnostics panel |
+| **LSP Editing** | `F2` | Rename symbol across all files |
+| | `Ctrl+.` | Open quick-fixes & code actions |
+| | `Ctrl+Alt+L` | Format the entire document via LSP (`terraform-ls`, `ruff`, `clangd`) |
+| **Git** | `Ctrl+Alt+G` | Open **GitSavvy Status** (stage hunks/files, commit, push, branch) |
+| | `Ctrl+Alt+D` | Open full Git diff for the current file |
+| | `Ctrl+Alt+B` | Toggle inline Git blame annotations |
+| | `Alt+Down` / `Alt+Up` | Jump between uncommitted Git gutter hunks |
+| | `Ctrl+K`, `Ctrl+Z` | Revert the uncommitted Git hunk under the cursor |

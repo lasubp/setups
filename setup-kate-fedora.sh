@@ -123,4 +123,58 @@ kwriteconfig6 --file katerc --group "Kate::Plugin::katefiletreeplugin" --key "En
 kwriteconfig6 --file katerc --group "KTextEditor View" --key "Line Numbers" "true"
 kwriteconfig6 --file katerc --group "KTextEditor View" --key "Line Modification" "true"
 
+echo "=== 10. Configuring Custom Shortcuts (Matching Sublime Text) ==="
+mkdir -p "$HOME/.local/share/kxmlgui5/kate"
+mkdir -p "$HOME/.local/share/kxmlgui5/lspclient"
+mkdir -p "$HOME/.local/share/kxmlgui5/kateproject"
+mkdir -p "$HOME/.local/share/kxmlgui5/kategitblameplugin"
+
+# Main Kate window actions (modified lines navigation)
+cat << 'EOF' > "$HOME/.local/share/kxmlgui5/kate/kateui.rc"
+<!DOCTYPE gui SYSTEM "kpartgui.dtd">
+<gui name="kate" version="1">
+  <ActionProperties>
+    <Action name="modified_line_down" shortcut="Alt+Down"/>
+    <Action name="modified_line_up" shortcut="Alt+Up"/>
+  </ActionProperties>
+</gui>
+EOF
+
+# LSP Client plugin actions
+cat << 'EOF' > "$HOME/.local/share/kxmlgui5/lspclient/ui.rc"
+<!DOCTYPE gui SYSTEM "kpartgui.dtd">
+<gui name="lspclient" version="1">
+  <ActionProperties>
+    <Action name="lspclient_goto_definition" shortcut="F12"/>
+    <Action name="lspclient_find_references" shortcut="Shift+F12"/>
+    <Action name="lspclient_hover" shortcut="Ctrl+K, Ctrl+I"/>
+    <Action name="lspclient_next_diagnostic" shortcut="F8"/>
+    <Action name="lspclient_prev_diagnostic" shortcut="Shift+F8"/>
+    <Action name="lspclient_rename" shortcut="F2"/>
+    <Action name="lspclient_code_action" shortcut="Ctrl+."/>
+    <Action name="lspclient_format" shortcut="Ctrl+Alt+L"/>
+  </ActionProperties>
+</gui>
+EOF
+
+# Project Plugin (Git sidebar) & Git Blame plugin actions
+cat << 'EOF' > "$HOME/.local/share/kxmlgui5/kateproject/ui.rc"
+<!DOCTYPE gui SYSTEM "kpartgui.dtd">
+<gui name="kateproject" version="1">
+  <ActionProperties>
+    <Action name="kate_mdi_toolview_kate_plugin_kateprojectplugin_git" shortcut="Ctrl+Alt+G"/>
+  </ActionProperties>
+</gui>
+EOF
+
+cat << 'EOF' > "$HOME/.local/share/kxmlgui5/kategitblameplugin/ui.rc"
+<!DOCTYPE gui SYSTEM "kpartgui.dtd">
+<gui name="kategitblameplugin" version="1">
+  <ActionProperties>
+    <Action name="git_blame_toggle" shortcut="Ctrl+Alt+B"/>
+  </ActionProperties>
+</gui>
+EOF
+
+
 echo "=== Done! Open Kate to verify your setup. ==="
