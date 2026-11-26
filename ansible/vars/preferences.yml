@@ -6,23 +6,23 @@ apps_to_install:
 - btop
 
 # Set "True" to setup comtrolled host as Ansible control plane
-ansible_comtrol_plane: true
+ansible_control_plane: true
 # Choose Ansible instalation way, "pipx" (default), or "dnf" (may require to setup extra repos)
 ansible_insalation_way: pipx
 
 # Setup EPEL reposetories
 # Works only on RHEL, Alma and Rocky
-# If enambled but run used on other distro, it will not run
+# If enabled but run used on other distro, it will not run
 setup_epel: true
 
 # Setup RPM Fusion
 setup_rpmfusion: true
 
-# Install addiditional media codecs
+# Install additional media codecs
 # Require RPM Fusion to also be enabled
 # Else this will not work
 media: true
 
-# Setup Flathub Flatpack reposetories
-# If Fedora flatpak reposetories was present, they will be swaped to Flathub reposetories
+# Setup Flathub Flatpak repositories
+# If Fedora flatpak repositories was present, they will be swaped to Flathub repositories
 flatpak: true
