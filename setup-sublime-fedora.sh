@@ -12,7 +12,7 @@ sudo rpm -v --import https://sublimetext.com
 sudo dnf config-manager addrepo --from-repofile=https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo --overwrite
 
 if [ ! -f /etc/yum.repos.d/hashicorp.repo ]; then
-    sudo dnf config-manager addrepo --from-repofile=https://hashicorp.com
+    sudo dnf config-manager addrepo --from-repofile=https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
 fi
 
 sudo dnf install -y \
